@@ -1,15 +1,19 @@
 import { createClient } from "@/utils/supabase/server";
-import { CreateToDoForm } from "./interactions/createToDo/ui";
+import { Separator } from "@/components/ui/separator";
+import { TodoList } from "@/components/todo-list";
 
 export default async function Home() {
   const supabase = createClient();
   const { data: todos, error } = await supabase.from("todos").select(); //removed rls (row level security)
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <CreateToDoForm />
+    <section className="p-3 pt-6 max-w-2xl w-full flex flex-col gap-4">
+      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+        Todos
+      </h1>
 
-      <pre>{JSON.stringify(todos, null, 2)}</pre>
-    </main>
+      <Separator className="w-full " />
+      <TodoList todos={todos ?? []} />
+    </section>
   );
 }
