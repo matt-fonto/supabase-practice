@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { login, signup } from "./actions";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { OAuthButtons } from "./oauth-signin";
+import { Separator } from "@/components/ui/separator";
 
 export default async function Login({
   searchParams,
@@ -36,7 +38,7 @@ export default async function Login({
             Enter your email below to login to your account
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-2">
           <form id="login-form" className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
@@ -73,7 +75,12 @@ export default async function Login({
               Login
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
+
+          <Separator />
+
+          <OAuthButtons />
+
+          <div className="text-center text-sm">
             Don&apos;t have an account?{" "}
             <button form="login-form" className="underline" formAction={signup}>
               Sign up
