@@ -9,61 +9,61 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      authors: {
-        Row: {
-          created_at: string
-          email: string
-          id: number
-          name: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: number
-          name: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: number
-          name?: string
-        }
-        Relationships: []
-      }
       todos: {
         Row: {
-          author_id: number
           created_at: string
           description: string | null
           id: number
           is_complete: boolean | null
           title: string
+          user_id: string | null
         }
         Insert: {
-          author_id: number
           created_at?: string
           description?: string | null
           id?: number
           is_complete?: boolean | null
           title: string
+          user_id?: string | null
         }
         Update: {
-          author_id?: number
           created_at?: string
           description?: string | null
           id?: number
           is_complete?: boolean | null
           title?: string
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "todos_author_fkey"
-            columns: ["author_id"]
+            foreignKeyName: "todos_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "authors"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
+      }
+      users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
       }
     }
     Views: {
