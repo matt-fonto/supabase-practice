@@ -1,17 +1,15 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/server";
+import { CreateToDoForm } from "./interactions/createToDo/ui";
 
 export default async function Home() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
-
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  let { data: todos, error } = await supabase.from("todos").select();
-
-  console.log("error", error);
-  console.log("todos", todos);
+  const supabase = createClient();
+  const { data: todos, error } = await supabase.from("todos").select(); //removed rls (row level security)
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24"></main>
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <CreateToDoForm />
+
+      <pre>{JSON.stringify(todos, null, 2)}</pre>
+    </main>
   );
 }
