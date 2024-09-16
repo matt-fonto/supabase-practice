@@ -16,6 +16,8 @@ function FormContent() {
         required
         placeholder="Add a new todo"
       />
+      <Textarea name="description" placeholder="Add a description" />
+
       <Button type="submit" size="icon" className="min-w-10">
         <Send className="h-5 w-5" />
         <span className="sr-only">Submit Todo</span>
