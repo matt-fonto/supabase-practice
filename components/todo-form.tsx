@@ -6,11 +6,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 import { useRef } from "react";
+import { useFormStatus } from "react-dom";
+import { TodoOptimisticUpdate } from "./todo-list";
+import { Todo } from "@/types/custom";
 
 function FormContent() {
+  const { pending } = useFormStatus();
+
   return (
     <>
       <Textarea
+        disabled={pending}
         minLength={4}
         name="title"
         required
@@ -18,7 +24,7 @@ function FormContent() {
       />
       <Textarea name="description" placeholder="Add a description" />
 
-      <Button type="submit" size="icon" className="min-w-10">
+      <Button type="submit" size="icon" className="min-w-10" disabled={pending}>
         <Send className="h-5 w-5" />
         <span className="sr-only">Submit Todo</span>
       </Button>
@@ -26,7 +32,11 @@ function FormContent() {
   );
 }
 
-export function TodoForm() {
+export function TodoForm({
+  optimisticUpdate,
+}: {
+  optimisticUpdate: TodoOptimisticUpdate;
+}) {
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
@@ -36,6 +46,18 @@ export function TodoForm() {
           className="flex gap-4"
           ref={formRef}
           action={async (data) => {
+            // this is fake data, only for the optimistic update
+            // Once the server is done updating, the real data will be returned
+            const newTodo: Todo = {
+              id: -1,
+              created_at: "",
+              title: data.get("title") as string,
+              description: data.get("description") as string,
+              is_complete: null,
+              user_id: null,
+            };
+
+            optimisticUpdate({ action: "create", todo: newTodo });
             await addTodo(data);
 
             formRef.current?.reset();

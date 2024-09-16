@@ -7,31 +7,52 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { Todo } from "@/types/custom";
 import { Pen, Trash2 } from "lucide-react";
+import { useFormStatus } from "react-dom";
+import { TodoOptimisticUpdate } from "./todo-list";
+import { useState } from "react";
 
-export function TodoItem({ todo }: { todo: Todo }) {
+export function TodoItem({
+  todo,
+  optimisticUpdate,
+}: {
+  todo: Todo;
+  optimisticUpdate: TodoOptimisticUpdate;
+}) {
   return (
     <form>
-      <TodoCard todo={todo} />
+      <TodoCard todo={todo} optimisticUpdate={optimisticUpdate} />
     </form>
   );
 }
 
-export function TodoCard({ todo }: { todo: Todo }) {
-  console.log("todo.is_complete", todo.is_complete);
-
-  // 58:55
+export function TodoCard({
+  todo,
+  optimisticUpdate,
+}: {
+  todo: Todo;
+  optimisticUpdate: TodoOptimisticUpdate;
+}) {
+  const { pending } = useFormStatus();
+  const [checked, setChecked] = useState(todo.is_complete); // instead of using useOptimistic, on checks we can use simple states
 
   return (
-    <Card className={cn("w-full")}>
+    <Card
+      className={cn("w-full", {
+        "opacity-50": pending,
+      })}
+    >
       <CardContent className="flex items-center justify-between gap-3 p-3">
         <div className="flex items-center justify-center ml-4">
           <span className="size-10 flex items-center justify">
             <Checkbox
-              checked={Boolean(todo.is_complete)}
+              disabled={pending}
+              checked={Boolean(checked)}
               onCheckedChange={async (checked) => {
                 if (checked === "indeterminate") {
                   return;
                 }
+
+                setChecked(checked);
 
                 await updateTodo({
                   ...todo,
@@ -59,8 +80,11 @@ export function TodoCard({ todo }: { todo: Todo }) {
             variant="ghost"
             size="icon"
             type="submit"
+            disabled={pending}
             // because it's inside a form
             formAction={async () => {
+              optimisticUpdate({ action: "delete", todo });
+
               await deleteTodo(todo.id);
             }}
           >
